@@ -1,0 +1,52 @@
+{
+  "name": "creare-backend",
+  "version": "0.0.1",
+  "description": "Creare's backend - a REST API made with NodeJS, MongoDB & Mongoose",
+  "main": "src/server.js",
+  "homepage": "https://github.com/israelmuca/creare-backend",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/IsraelMuCa/creare-backend.git"
+  },
+  "scripts": {
+    "start": "npm run build && node ./dist/server.js",
+    "dev": "nodemon --exec babel-node src/server.js",
+    "seed": "DEBUG=mongo-seeding node ./seeder/seeder.js",
+    "test": "npm run seed && mocha --require @babel/register ./tests/*.js --timeout 15000 -s 0",
+    "clean": "rm -rf dist && mkdir dist",
+    "transpile": "babel -d ./dist ./src",
+    "build": "npm run clean && npm run transpile"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/runtime": "^7.4.4",
+    "@sendgrid/mail": "^6.3.1",
+    "api-query-params": "^4.10.1",
+    "await-to-js": "^2.1.1",
+    "bcrypt": "^3.0.6",
+    "body-parser": "^1.19.0",
+    "continuation-local-storage": "^3.2.1",
+    "crypto": "^1.0.1",
+    "dotenv": "^8.0.0",
+    "express": "^4.16.4",
+    "helmet": "^3.18.0",
+    "jsonwebtoken": "^8.5.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.5.5",
+    "morgan": "^1.9.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/node": "^7.2.2",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/register": "^7.4.4",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^6.1.4",
+    "mongo-seeding": "^3.1.1",
+    "nodemon": "^1.19.0"
+  }
+}
