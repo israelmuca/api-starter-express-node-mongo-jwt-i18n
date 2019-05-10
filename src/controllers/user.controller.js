@@ -24,7 +24,7 @@ exports.postUser = async (req, res) => {
 
     // VALIDATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (!isCurrentUserAdmin) {
-        return res.status(403).send({ auth: false, message: 'Only admins can add users', token: null })
+        return res.status(403).send({ auth: false, message: req.polyglot.t('403-onlyAdminsCreateUser'), token: null })
     }
 
     // CREATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -37,7 +37,7 @@ exports.postUser = async (req, res) => {
     }))
     if (errNewUser) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't create user"
+        const message = req.polyglot.t('500-createUser')
 
         // Log the error
         errorLogger(message, req.url, "User.create", req.method, errNewUser)
@@ -54,7 +54,7 @@ exports.postUser = async (req, res) => {
     const token = createJWT({ userId: userId, userIsAdmin: userIsAdmin }, { expiresIn: '12h' })
 
     // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    return res.status(200).send({ auth: true, message: "The user was created successfully", user: newUser, token: token })
+    return res.status(200).send({ auth: true, message: req.polyglot.t('200-userCreated'), user: newUser, token: token })
 }
 
 /*
@@ -91,7 +91,7 @@ exports.putUser = async (req, res) => {
         const [errUser, mongoUpdatedUser] = await to(User.findByIdAndUpdate(userId, updatedUser, { new: true }))
         if (errUser) {
             // Create the error message, and context of the error
-            const message = "ERROR: Couldn't update user"
+            const message = req.polyglot.t('500-updateUser')
 
             // Log the error
             errorLogger(message, req.url, "User.findByIdAndUpdate", req.method, errUser)
@@ -100,20 +100,20 @@ exports.putUser = async (req, res) => {
             return res.status(500).send({ auth: 'unknown', message })
         }
 
-        return res.status(200).send({ auth: true, message: "Successfully updated user", user: mongoUpdatedUser })
+        return res.status(200).send({ auth: true, message: req.polyglot.t('200-userUpdated'), user: mongoUpdatedUser })
 
     } else {
 
         // Check if the logged in user is changing his own data, if not, return not auth, if yes, proceed
         if (currentUserId != userId) {
-            return res.status(403).send({ auth: false, message: "Only admin users can change other users", user: null })
+            return res.status(403).send({ auth: false, message: req.polyglot.t('403-onlyAdminsModUser'), user: null })
         }
 
         // UPDATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
         const [errUser, mongoUpdatedUser] = await to(User.findByIdAndUpdate(userId, updatedUser, { new: true }))
         if (errUser) {
             // Create the error message, and context of the error
-            const message = "ERROR: Couldn't update user"
+            const message = req.polyglot.t('500-updateUser')
 
             // Log the error
             errorLogger(message, req.url, "User.findByIdAndUpdate", req.method, errUser)
@@ -123,7 +123,7 @@ exports.putUser = async (req, res) => {
         }
 
         // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-        return res.status(200).send({ auth: true, message: "Successfully updated user", user: mongoUpdatedUser })
+        return res.status(200).send({ auth: true, message: req.polyglot.t('200-userUpdated'), user: mongoUpdatedUser })
     }
 
 }
@@ -145,7 +145,7 @@ exports.getUsers = async (req, res) => {
     const [errUsers, users] = await to(User.find(filter).skip(skip).limit(limit).sort(sort).select(projection))
     if (errUsers) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't find users"
+        const message = req.polyglot.t('500-findUsers')
 
         // Log the error
         errorLogger(message, req.url, "User.find", req.method, errUsers)
@@ -155,7 +155,7 @@ exports.getUsers = async (req, res) => {
     }
 
     // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    return res.status(200).send({ auth: true, message: "Successfuly found users", users: users })
+    return res.status(200).send({ auth: true, message: req.polyglot.t('200-usersFound'), users: users })
 }
 
 /*
@@ -175,7 +175,7 @@ exports.getUser = async (req, res) => {
     const [errUser, user] = await to(User.findById(userId))
     if (errUser) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't find users"
+        const message = req.polyglot.t('500-findUser')
 
         // Log the error
         errorLogger(message, req.url, "User.findById", req.method, errUser)
@@ -185,5 +185,5 @@ exports.getUser = async (req, res) => {
     }
 
     // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    return res.status(200).send({ auth: true, message: "Successfuly found user", user: user })
+    return res.status(200).send({ auth: true, message: req.polyglot.t('200-userFound'), user: user })
 }

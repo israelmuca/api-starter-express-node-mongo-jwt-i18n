@@ -1,6 +1,5 @@
 const { Seeder } = require('mongo-seeding')
 const path = require('path')
-require('./config/env')
 
 const config = {
     database: process.env.MONGOOSE_DB,

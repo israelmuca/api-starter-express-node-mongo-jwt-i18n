@@ -17,8 +17,8 @@
     "transpile": "babel -d ./dist ./src",
     "build": "npm run clean && npm run transpile"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Israel Muñoz",
+  "license": "MIT",
   "dependencies": {
     "@babel/runtime": "^7.4.4",
     "@sendgrid/mail": "^6.3.1",
@@ -30,11 +30,15 @@
     "crypto": "^1.0.1",
     "dotenv": "^8.0.0",
     "express": "^4.16.4",
+    "express-locale": "^1.2.0",
+    "express-validator": "^5.3.1",
     "helmet": "^3.18.0",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "mongoose": "^5.5.5",
-    "morgan": "^1.9.1"
+    "morgan": "^1.9.1",
+    "node-polyglot": "^2.3.0",
+    "object.fromentries": "^2.0.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.4.4",

@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { getCurrentUserId, getCurrentCompanyId } from './getSetContext'
+import { getCurrentUserId } from './getSetContext'
 
 // Create a fs write stream to append the errors
 const error = fs.createWriteStream('./logs/error.txt')
@@ -12,13 +12,13 @@ const error = fs.createWriteStream('./logs/error.txt')
 * Returns, status 200 & the tickets
 */
 exports.errorLogger = (message, url, func, verb, err) => {
-    
+
     // Set the context of the user
     const userId = getCurrentUserId()
 
     // Form the actual line that will be added
     const newLogLine =
-`\nDate: ${new Date().toISOString()}
+        `\nDate: ${new Date().toISOString()}
 User: ${userId}
 Verb: ${verb}
 Message: ${message}

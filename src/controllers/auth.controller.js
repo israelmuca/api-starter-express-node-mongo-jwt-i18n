@@ -26,7 +26,7 @@ exports.login = async (req, res) => {
     const [errUser, user] = await to(User.findOne({ email }))
     if (errUser) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't find user"
+        const message = req.polyglot.t('500-findUser')
 
         // Log the error
         errorLogger(message, req.url, "User.findOne", req.method, errUser)
@@ -36,14 +36,14 @@ exports.login = async (req, res) => {
     }
     // VALIDATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (!user) { // If the user doesn't exist or is disabled, fail auth
-        return res.status(401).send({ auth: false, message: 'Auth failed', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
     }
 
     // COMPARE PWD - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     const [errPwd, passwordIsValid] = await to(bcrypt.compare(password, user.hash))
     if (errPwd) {
         // Create the error message, and context of the error
-        const message = 'ERROR: password comparison failed'
+        const message = req.polyglot.t('500-verifyPass')
 
         // Log the error
         errorLogger(message, req.url, "bcrypt.compare", req.method, errPwd)
@@ -52,12 +52,12 @@ exports.login = async (req, res) => {
         return res.status(500).send({ auth: 'unknown', message })
     }
     if (!passwordIsValid) { // Invalid password should just fail auth, do not give clues
-        return res.status(401).send({ auth: false, message: 'Auth failed', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
     }
 
     // CREATE TOKEN & RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     const token = createJWT({ userId: user._id, userIsAdmin: user.isAdmin }, { expiresIn: '12h' })
-    return res.status(200).send({ auth: true, message: 'Successful auth', token: token })
+    return res.status(200).send({ auth: true, message: req.polyglot.t('200-auth'), token: token })
 }
 
 /*
@@ -77,7 +77,7 @@ exports.forgotPassword = async (req, res) => {
     const [errUser, user] = await to(User.findOne({ email }))
     if (errUser) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't find user"
+        const message = req.polyglot.t('500-findUser')
 
         // Log the error
         errorLogger(message, req.url, "User.findOne", req.method, errUser)
@@ -87,7 +87,7 @@ exports.forgotPassword = async (req, res) => {
     }
     // VALIDATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     if (!user || !user.isEnabled) { // If the user doesn't exist or is disabled, fail auth but don't tell
-        return res.status(200).send({ auth: 'unknown', message: 'If email exists, password recovery was sent', token: undefined })
+        return res.status(200).send({ auth: 'unknown', message: req.polyglot.t('200-ifEmailExists'), token: undefined })
     }
 
     // ADD TEMPTOKEN TO USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -101,7 +101,7 @@ exports.forgotPassword = async (req, res) => {
     const [errUserSave, updatedUser] = await to(user.save())
     if (errUserSave) {
         // Create the error message, and context of the error
-        const message = 'ERROR: save user failed'
+        const message = req.polyglot.t('500-updateUserTempToken')
 
         // Log the error
         errorLogger(message, req.url, "user.save", req.method, errUserSave)
@@ -119,7 +119,7 @@ exports.forgotPassword = async (req, res) => {
     const [errEmail, mail] = await to(mailer.emailforgotPwd(userEmail, URL))
     if (errEmail) {
         // Create the error message, and context of the error
-        const message = "ERROR: Sending the email"
+        const message = req.polyglot.t('500-sendEmail')
 
         // Log the error
         errorLogger(message, req.url, "mailer.emailforgotPwd", req.method, errEmail)
@@ -130,7 +130,7 @@ exports.forgotPassword = async (req, res) => {
     console.log(`emailforgotPwd sent, generated temp token: ${user.tempToken}`)
 
     // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    return res.status(200).send({ auth: 'unknown', message: 'If email exists, password recovery was sent', token: undefined })
+    return res.status(200).send({ auth: 'unknown', message: req.polyglot.t('200-ifEmailExists'), token: undefined })
 }
 
 /*
@@ -151,7 +151,7 @@ exports.forgotPasswordLogin = async (req, res) => {
     const [errUser, user] = await to(User.findOne({ email }))
     if (errUser) {
         // Create the error message, and context of the error
-        const message = "ERROR: Couldn't find user"
+        const message = req.polyglot.t('500-findUser')
 
         // Log the error
         errorLogger(message, req.url, "User.findOne", req.method, errUser)
@@ -163,17 +163,17 @@ exports.forgotPasswordLogin = async (req, res) => {
     // VALIDATE USER & TOKEN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
     // If the user doesn't exist or is disabled, fail auth
     if (!user || !user.isEnabled) {
-        return res.status(401).send({ auth: false, message: 'Auth failed', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
     }
 
     // Check the expiration of the token
     if (currDate > user.tempTokenExpiry) {
-        return res.status(401).send({ auth: false, message: 'Token is invalid', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-invalidToken'), token: null })
     }
 
     // Check if tokens don't match
     if (tempToken != user.tempToken) {
-        return res.status(401).send({ auth: false, message: 'Token is invalid', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-invalidToken'), token: null })
     }
 
     // CREATE TOKEN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -181,5 +181,5 @@ exports.forgotPasswordLogin = async (req, res) => {
     const token = createJWT({ userId: user._id, userIsAdmin: user.isAdmin }, { expiresIn: '12h' })
 
     // RESPOND - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    return res.status(200).send({ auth: true, message: 'Successful auth', token: token })
+    return res.status(200).send({ auth: true, message: req.polyglot.t('200-auth'), token: token })
 }

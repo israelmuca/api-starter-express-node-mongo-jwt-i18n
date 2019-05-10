@@ -29,14 +29,14 @@ exports.verifyJWT = (req, res, next) => {
 
     // Confirm there's an auth header
     if (!req.headers.authorization) {
-        return res.status(401).send({ auth: false, message: 'There were no auth headers with the request', token: null })
+        return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
     }
 
     // Get Bearer Token & verify it
     const token = req.headers.authorization.split(' ')[1]
     jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
         if (err) {
-            return res.status(401).send({ auth: false, message: "ERROR: couldn't process the token", token: null })
+            return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
         }
 
         // If token is valid, create the context when it is available

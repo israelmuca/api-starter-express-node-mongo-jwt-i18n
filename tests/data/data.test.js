@@ -23,3 +23,8 @@ export const nonAdminUser = {
     phoneNumber: "123",
     isAdmin: false
 }
+
+export const errUser = {
+    weirdField: "whaaaat?",
+    yetAnother: "hhhmmmm"
+}
