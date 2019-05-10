@@ -1,6 +1,6 @@
 import chai from 'chai'
 import chaiHttp from 'chai-http'
-import { fakeLogin, rootUserLogin, adminUser, nonAdminUser } from './data/data.test'
+import { fakeLogin, rootUserLogin, adminUser, nonAdminUser, nonAdminUser2 } from './data/data.test'
 
 chai.use(chaiHttp)
 
@@ -64,11 +64,22 @@ describe('Users:', () => {
             })
     })
 
-    it('should fail to create a user because non-admin user token is used', done => {
+    it('should fail to create a user because the email already exists', done => {
         chai.request(url)
             .post('/api/users')
             .set('authorization', 'Bearer ' + nonAdminToken)
             .send(nonAdminUser)
+            .end((err, res) => {
+                expect(res.body.email.msg).to.equal('This email is already in use.')
+                done()
+            })
+    })
+
+    it('should fail to create a user because non-admin user token is used', done => {
+        chai.request(url)
+            .post('/api/users')
+            .set('authorization', 'Bearer ' + nonAdminToken)
+            .send(nonAdminUser2)
             .end((err, res) => {
                 expect(res).to.have.status(403)
                 done()

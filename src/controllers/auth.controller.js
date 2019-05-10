@@ -35,7 +35,7 @@ exports.login = async (req, res) => {
         return res.status(500).send({ auth: 'unknown', message })
     }
     // VALIDATE USER - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
-    if (!user) { // If the user doesn't exist or is disabled, fail auth
+    if (!user) { // If the user doesn't exist, fail auth
         return res.status(401).send({ auth: false, message: req.polyglot.t('401-failedAuth'), token: null })
     }
 

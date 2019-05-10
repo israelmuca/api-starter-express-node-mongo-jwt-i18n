@@ -1,6 +1,5 @@
 import chai from 'chai'
 import { messages } from '../src/i18n/i18n'
-import { errUser } from './data/data.test'
 
 const expect = chai.expect
 const url = 'http://localhost:8080'
@@ -13,26 +12,24 @@ describe('Translations: ', () => {
         done()
     })
 
-    /* it("should pass if an spanish message is returned when es_MX headers are sent", done => {
+    it("should pass if an spanish message is returned when es_MX headers are sent", done => {
         chai.request(url)
-        .post('/api/companies')
-        .set('Accept-Language', 'es_MX')
-        .send(errCompany)
-        .end((err, res) => {
-            expect(res.body.commercialName.msg).to.be.equal("'commercialName' es un campo requerido.")
-            done()
-        })
+            .post('/api/users')
+            .set('Accept-Language', 'es_MX')
+            .end((err, res) => {
+                expect(res.body.message).to.be.equal('Falló la autenticación.')
+                done()
+            })
     })
 
     it("should pass if an english message is returned when en_US headers are sent", done => {
         chai.request(url)
-        .post('/api/companies')
-        .set('Accept-Language', 'en_US')
-        .send(errCompany)
-        .end((err, res) => {
-            expect(res.body.commercialName.msg).to.be.equal("'commercialName' is a required field.")
-            done()
-        })
-    }) */
+            .post('/api/users')
+            .set('Accept-Language', 'en_US')
+            .end((err, res) => {
+                expect(res.body.message).to.be.equal('Failed authenticaton.')
+                done()
+            })
+    })
 
 })

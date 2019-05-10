@@ -2,7 +2,7 @@ const { Seeder } = require('mongo-seeding')
 const path = require('path')
 
 const config = {
-    database: process.env.MONGOOSE_DB,
+    database: 'mongodb://localhost/api-starter-node-jwt-mongo',
     dropDatabase: true,
 }
 

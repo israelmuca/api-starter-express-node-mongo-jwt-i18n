@@ -12,6 +12,7 @@ export const adminUser = {
     fullName: "Admin User",
     email: "fake2@api-starter.com.mx",
     password: "1234567890",
+    passwordConfirm: "1234567890",
     phoneNumber: "456",
     isAdmin: true
 }
@@ -20,11 +21,16 @@ export const nonAdminUser = {
     fullName: "non-admin User",
     email: "fake@api-starter.com.mx",
     password: "1234567890",
+    passwordConfirm: "1234567890",
     phoneNumber: "123",
     isAdmin: false
 }
 
-export const errUser = {
-    weirdField: "whaaaat?",
-    yetAnother: "hhhmmmm"
+export const nonAdminUser2 = {
+    fullName: "non-admin User",
+    email: "fake3@api-starter.com.mx",
+    password: "1234567890",
+    passwordConfirm: "1234567890",
+    phoneNumber: "123",
+    isAdmin: false
 }

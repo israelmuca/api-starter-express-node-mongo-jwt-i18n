@@ -24,7 +24,7 @@ exports.validator = functionName => {
                     .isEmail().withMessage('emailIsEmail')
                     .custom(email => {
                         // Verify if there's another user with the same email
-                        return User({ skipTenant: true }).findOne({ email }).then(user => {
+                        return User.findOne({ email }).then(user => {
                             if (user) {
                                 if (user.email === email) { // Added this to fix a weird error
                                     return Promise.reject('emailIsUnique')
